@@ -1,11 +1,11 @@
 // src/components/Timer.tsx
 import { useEffect, useRef, useState } from "react";
 
-function ClockDigits({ time, size }: { time: number, size: number }) {
+function ClockDigits({ time }: { time: number }) {
   const minutes = String(Math.floor(time / 60)).padStart(2, "0");
   const seconds = String(time % 60).padStart(2, "0");
   return (
-    <div className={`text-${size}xl font-mono mb-6`}>
+    <div className="font-mono mb-6">
       {minutes}:{seconds}
     </div>
   )
@@ -18,10 +18,12 @@ const POSESSION_CNANGE_INITIAL = 10;
 function ShotClock({ clock, setClock }: { clock: number, setClock: any }) {
   return (
     <div className="text-center p-2 border-2 border-gray-600">
-      <div className="text-left">
+      <div className="text-left text-xl">
         Shot Clock
       </div>
-      <ClockDigits time={clock} size={4} />
+      <div className="text-4xl">
+        <ClockDigits time={clock} />
+      </div>
       <div className="flex gap-2">
         <button onClick={() => setClock(clock + 10)} className="flex-1 p-2 bg-gray-600 hover:bg-gray-700 rounded">
           + 10 sec
@@ -77,11 +79,13 @@ export const Timer = () => {
 
   return (
     <div className="text-center w-full py-10">
-      <div>
+      <div className="w-[40%] flex flex-col mx-auto">
         <div className="text-left">
           Game Clock
         </div>
-        <ClockDigits time={gameClock} size={7} />
+        <div className="text-2xl">
+          <ClockDigits time={gameClock} />
+        </div>
       </div>
       <div className="w-[70%] mx-auto my-2">
         <ShotClock clock={subClock} setClock={setSubClock} />

@@ -1,11 +1,17 @@
 import { useState } from "react";
+import { BiTransfer } from "react-icons/bi";
+import { FaShieldAlt } from "react-icons/fa";
+import { GiBroadsword } from "react-icons/gi";
 
-function UpDownButton({ className, diff, value, setValue }: { className: string, diff: number, value: number, setValue: any }) {
+function UpDownButton({ color, diff, value, setValue }: { color: string, diff: number, value: number, setValue: any }) {
     const sign = diff > 0 ? "+" : "";
+    const bgColor = color === "red" ?
+        "rounded flex-1 bg-red-300 hover:bg-red-400 active:bg-red-500" :
+        "rounded flex-1 bg-blue-300 hover:bg-blue-400 activate:bg-blue-500";
     return (
         <button onClick={
-            () => setValue(Math.max(0,value + diff))
-        } className={className}>
+            () => setValue(Math.max(0, value + diff))
+        } className={bgColor}>
             {sign} {diff}
         </button>
     )
@@ -14,38 +20,67 @@ function UpDownButton({ className, diff, value, setValue }: { className: string,
 export function ScoreBoard({ color }: { color: string }) {
     const [score, setScore] = useState(0);
 
-    const buttoClassName = `rounded flex-1 bg-${color}-300 hover:bg-${color}-500`
+    const bgColor = color === "red" ? "bg-red-200" : "bg-blue-200";
     return (
-        <div className={`bg-${color}-200`}>
+        <div className={bgColor}>
             <div className={`text-4xl text-center p-8`}>
                 {score}
             </div>
             <div className="flex h-20 gap-2 p-1">
-                <UpDownButton diff={2} value={score} setValue={setScore} className={buttoClassName} />
-                <UpDownButton diff={3} value={score} setValue={setScore} className={buttoClassName} />
-                <UpDownButton diff={7} value={score} setValue={setScore} className={buttoClassName} />
+                <UpDownButton diff={2} value={score} setValue={setScore} color={color} />
+                <UpDownButton diff={3} value={score} setValue={setScore} color={color} />
+                <UpDownButton diff={7} value={score} setValue={setScore} color={color} />
             </div>
             <div className="flex h-10 gap-2 p-1">
-                <UpDownButton diff={-2} value={score} setValue={setScore} className={buttoClassName} />
-                <UpDownButton diff={-3} value={score} setValue={setScore} className={buttoClassName} />
-                <UpDownButton diff={-7} value={score} setValue={setScore} className={buttoClassName} />
+                <UpDownButton diff={-2} value={score} setValue={setScore} color={color} />
+                <UpDownButton diff={-3} value={score} setValue={setScore} color={color} />
+                <UpDownButton diff={-7} value={score} setValue={setScore} color={color} />
             </div>
         </div>
     )
 }
 
+enum Role {
+    Offense,
+    Defense,
+}
+
+function RoleContent({ role }: { role: Role }) {
+    switch (role) {
+        case Role.Offense:
+            return (<GiBroadsword className="text-4xl" />);
+        case Role.Defense:
+            return (<FaShieldAlt className="text-4xl" />);
+        default:
+            return (<div></div>);
+    }
+}
+
 export default function ScoreArea() {
+    const [redRole, setRedRole] = useState(Role.Offense);
+    const [blueRole, setBlueRole] = useState(Role.Defense);
+
     return (
         <div className="w-full flex text-gray-800 gap-2">
             <div className="flex-1 bg-red-500 rounded-lg p-2">
                 <div className="bg-red-500 p-1 text-2xl">
-                    Offense
+                    <RoleContent role={redRole} />
                 </div>
                 <ScoreBoard color="red" />
             </div>
+
+            <div className="items-center flex flex-col justify-center text-white">
+                <button onClick={() => {
+                    setRedRole(redRole === Role.Offense ? Role.Defense : Role.Offense);
+                    setBlueRole(blueRole === Role.Offense ? Role.Defense : Role.Offense);
+                }} className="text-2xl text-center bg-gray-500 rounded-lg p-2 hover:bg-gray-600">
+                    <BiTransfer className="text-3xl" />
+                </button>
+            </div>
+
             <div className="flex-1 bg-blue-500 rounded-lg p-2">
                 <div className="bg-blue-500 p-1 text-2xl">
-                    Defense
+                    <RoleContent role={blueRole} />
                 </div>
                 <ScoreBoard color="blue" />
             </div>

@@ -8,7 +8,7 @@ function App() {
     <div className="
     min-h-screen flex flex-col items-center 
     justify-center bg-gray-900 text-white
-     font-sans">
+     font-sans p-4">
       <div className="w-120">
         <Logo />
         <Timer />
