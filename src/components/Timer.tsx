@@ -1,5 +1,6 @@
 // src/components/Timer.tsx
 import { useEffect, useRef, useState } from "react";
+import { FaPlay, FaPause, FaRedo } from "react-icons/fa";
 
 function ClockDigits({ time }: { time: number }) {
   const minutes = String(Math.floor(time / 60)).padStart(2, "0");
@@ -25,13 +26,13 @@ function ShotClock({ clock, setClock }: { clock: number, setClock: any }) {
         <ClockDigits time={clock} />
       </div>
       <div className="flex gap-2">
-        <button onClick={() => setClock(clock + 10)} className="flex-1 p-2 bg-gray-600 hover:bg-gray-700 rounded">
+        <button onClick={() => setClock(clock + 10)} className="flex-1 p-2 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 rounded">
           + 10 sec
         </button>
-        <button onClick={() => setClock(Math.max(0, clock - 10))} className="flex-1 p-2 bg-gray-600 hover:bg-gray-700 rounded">
+        <button onClick={() => setClock(Math.max(0, clock - 10))} className="flex-1 p-2 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 rounded">
           - 10 sec
         </button>
-        <button onClick={() => setClock(SHOT_CLOCK_INITIAL)} className="flex-1 p-2 bg-gray-600 hover:bg-gray-700 rounded">
+        <button onClick={() => setClock(SHOT_CLOCK_INITIAL)} className="flex-1 p-2 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 rounded">
           Reset
         </button>
       </div>
@@ -93,21 +94,21 @@ export const Timer = () => {
       <div className="flex gap-2">
         <button
           onClick={() => setActiveGameClock(true)}
-          className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded text-white font-semibold"
+          className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded active:bg-green-700 text-white font-semibold"
         >
-          ▶️
+          <FaPlay className="inline" />
         </button>
         <button
           onClick={() => setActiveGameClock(false)}
-          className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded text-white font-semibold"
+          className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700 rounded text-white font-semibold"
         >
-          ⏸️
+          <FaPause className="inline" />
         </button>
         <button
           onClick={reset}
-          className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded text-white font-semibold"
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 active:bg-red-700 rounded text-white font-semibold"
         >
-          RST
+          <FaRedo className="inline" />
         </button>
       </div>
     </div>

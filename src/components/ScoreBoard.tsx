@@ -7,7 +7,7 @@ function UpDownButton({ color, diff, value, setValue }: { color: string, diff: n
     const sign = diff > 0 ? "+" : "";
     const bgColor = color === "red" ?
         "rounded flex-1 bg-red-300 hover:bg-red-400 active:bg-red-500" :
-        "rounded flex-1 bg-blue-300 hover:bg-blue-400 activate:bg-blue-500";
+        "rounded flex-1 bg-blue-300 hover:bg-blue-400 active:bg-blue-500";
     return (
         <button onClick={
             () => setValue(Math.max(0, value + diff))
@@ -73,7 +73,7 @@ export default function ScoreArea() {
                 <button onClick={() => {
                     setRedRole(redRole === Role.Offense ? Role.Defense : Role.Offense);
                     setBlueRole(blueRole === Role.Offense ? Role.Defense : Role.Offense);
-                }} className="text-2xl text-center bg-gray-500 rounded-lg p-2 hover:bg-gray-600">
+                }} className="text-2xl text-center bg-gray-500 rounded-lg p-2 hover:bg-gray-600 active:bg-gray-700">
                     <BiTransfer className="text-3xl" />
                 </button>
             </div>
