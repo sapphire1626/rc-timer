@@ -3,21 +3,21 @@ import { BiTransfer } from "react-icons/bi";
 import { FaShieldAlt } from "react-icons/fa";
 import { GiBroadsword } from "react-icons/gi";
 
-function UpDownButton({ color, diff, value, setValue }: { color: string, diff: number, value: number, setValue: any }) {
+function UpDownButton({ color, diff, value, setValue, disabled }: { color: string, diff: number, value: number, setValue: any, disabled:boolean }) {
     const sign = diff > 0 ? "+" : "";
-    const bgColor = color === "red" ?
-        "rounded flex-1 bg-red-300 hover:bg-red-400 active:bg-red-500" :
-        "rounded flex-1 bg-blue-300 hover:bg-blue-400 active:bg-blue-500";
+    const className = color === "red" ?
+        "rounded flex-1 bg-red-300 hover:bg-red-400 active:bg-red-500 disabled:bg-gray-400" :
+        "rounded flex-1 bg-blue-300 hover:bg-blue-400 active:bg-blue-500 disabled:bg-gray-400";
     return (
         <button onClick={
             () => setValue(Math.max(0, value + diff))
-        } className={bgColor}>
+        } className={className} disabled={disabled}>
             {sign} {diff}
         </button>
     )
 }
 
-export function ScoreBoard({ color }: { color: string }) {
+export function ScoreBoard({ color, role}: { color: string, role: Role }) {
     const [score, setScore] = useState(0);
 
     const bgColor = color === "red" ? "bg-red-200" : "bg-blue-200";
@@ -27,14 +27,14 @@ export function ScoreBoard({ color }: { color: string }) {
                 {score}
             </div>
             <div className="flex h-20 gap-2 p-1">
-                <UpDownButton diff={2} value={score} setValue={setScore} color={color} />
-                <UpDownButton diff={3} value={score} setValue={setScore} color={color} />
-                <UpDownButton diff={7} value={score} setValue={setScore} color={color} />
+                <UpDownButton diff={2} value={score} setValue={setScore} color={color} disabled={role==Role.Defense}/>
+                <UpDownButton diff={3} value={score} setValue={setScore} color={color} disabled={role==Role.Defense}/>
+                <UpDownButton diff={7} value={score} setValue={setScore} color={color} disabled={role==Role.Defense}/>
             </div>
             <div className="flex h-10 gap-2 p-1">
-                <UpDownButton diff={-2} value={score} setValue={setScore} color={color} />
-                <UpDownButton diff={-3} value={score} setValue={setScore} color={color} />
-                <UpDownButton diff={-7} value={score} setValue={setScore} color={color} />
+                <UpDownButton diff={-2} value={score} setValue={setScore} color={color} disabled={role==Role.Defense}/>
+                <UpDownButton diff={-3} value={score} setValue={setScore} color={color} disabled={role==Role.Defense}/>
+                <UpDownButton diff={-7} value={score} setValue={setScore} color={color} disabled={role==Role.Defense}/>
             </div>
         </div>
     )
@@ -66,7 +66,7 @@ export default function ScoreArea() {
                 <div className="bg-red-500 p-1 text-2xl">
                     <RoleContent role={redRole} />
                 </div>
-                <ScoreBoard color="red" />
+                <ScoreBoard color="red" role={redRole}/>
             </div>
 
             <div className="items-center flex flex-col justify-center text-white">
@@ -82,7 +82,7 @@ export default function ScoreArea() {
                 <div className="bg-blue-500 p-1 text-2xl">
                     <RoleContent role={blueRole} />
                 </div>
-                <ScoreBoard color="blue" />
+                <ScoreBoard color="blue" role={blueRole}/>
             </div>
         </div>
     )
