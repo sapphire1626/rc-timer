@@ -108,7 +108,7 @@ function SettingTime({ clock, active }: { clock: number, active: boolean }) {
   );
 }
 
-export const Timer = () => {
+export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const [subClockState, setSubClockState] = useState(SubClockState.SettingTime);
   const [gameClock, setGameClock] = useState(GAME_CLOCK_INITIAL);
   const [activeGameClock, setActiveGameClock] = useState(false);
@@ -180,6 +180,9 @@ export const Timer = () => {
       <button onClick={() => {
         setActiveGameClock(false);
         setActiveSubClock(false);
+        if (subClockState === SubClockState.PossessionChange) {
+          setIsRedOffense((prev) => !prev);
+        }
         const nextClock = getNextClock(subClockState);
         setSubClockState(nextClock);
         setSubClock(getClockInitial(nextClock));
