@@ -23,6 +23,20 @@ const SHOT_CLOCK_INITIAL = 20;
 const POSESSION_CNANGE_INITIAL = 10;
 const SETTING_TIME_INITIAL = 60;
 
+function playTimeupSound(){
+  const audio = new Audio("/audio/timeup.mp3");
+  let count = 0;
+  const maxLoop = 1;
+  audio.addEventListener("ended", () => {
+    count++;
+    if (count < maxLoop) {
+      audio.currentTime = 0; // 再生位置を先頭に戻す
+      audio.play();
+    }
+  });
+  audio.play();
+}
+
 function getClockInitial(subClockState: SubClockState) {
   switch (subClockState) {
     case SubClockState.ShotClock:
@@ -124,6 +138,7 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
           if (prev <= 1) {
             setActiveGameClock(false);
             clearInterval(gameClockIntervalRef.current!);
+            playTimeupSound(); // タイマーが0になったら音を鳴らす
             return 0;
           }
           return prev - 1;
@@ -143,6 +158,7 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
             setActiveSubClock(false);
             setActiveGameClock(false);
             clearInterval(subClockIntervalRef.current!);
+            playTimeupSound(); // タイマーが0になったら音を鳴らす
             return 0;
           }
           return prev - 1;
