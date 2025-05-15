@@ -23,7 +23,7 @@ const SHOT_CLOCK_INITIAL = 20;
 const POSESSION_CNANGE_INITIAL = 10;
 const SETTING_TIME_INITIAL = 60;
 
-function playTimeupSound(){
+function playTimeupSound() {
   const audio = new Audio("/audio/timeup.mp3");
   let count = 0;
   const maxLoop = 1;
@@ -72,7 +72,7 @@ function getDigitColor(time: number, active: boolean) {
 }
 
 
-function ShotClock({ clock, setClock, active }: { clock: number, setClock: any, active: boolean }) {
+function ShotClock({ clock, setClock, active, reset }: { clock: number, setClock: any, active: boolean, reset: any }) {
   return (
     <div className={`text-center p-2 border-2 ${clock == 0 ? "border-red-800" : "border-gray-600"}`}>
       <div className="text-left text-xl m-1">
@@ -88,7 +88,7 @@ function ShotClock({ clock, setClock, active }: { clock: number, setClock: any, 
         <button onClick={() => setClock(Math.max(0, clock - 10))} className="flex-1 p-2 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 rounded">
           - 10 sec
         </button>
-        <button onClick={() => setClock(SHOT_CLOCK_INITIAL)} className="flex-1 p-2 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 rounded">
+        <button onClick={() => reset()} className="flex-1 p-2 bg-gray-500 hover:bg-gray-600 active:bg-gray-700 rounded">
           Reset
         </button>
       </div>
@@ -131,6 +131,83 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
   const gameClockIntervalRef = useRef<number | null>(null);
   const subClockIntervalRef = useRef<number | null>(null);
 
+  const handlePlay = () => {
+    setActiveSubClock(true);
+    if (subClockState == SubClockState.ShotClock) {
+      setActiveGameClock(true);
+    }
+  };
+
+  const handleNextClock = () => {
+    setActiveGameClock(false);
+    setActiveSubClock(false);
+    if (subClockState === SubClockState.PossessionChange) {
+      setIsRedOffense((prev) => !prev);
+    }
+    const nextClock = getNextClock(subClockState);
+    setSubClockState(nextClock);
+    setSubClock(getClockInitial(nextClock));
+  };
+
+  const handlePause = () => {
+    setActiveGameClock(false);
+    setActiveSubClock(false);
+  };
+
+  const handleResetAll = () => {
+    setActiveGameClock(false);
+    setActiveSubClock(false);
+    setGameClock(GAME_CLOCK_INITIAL);
+    setSubClockState(SubClockState.SettingTime);
+    setSubClock(getClockInitial(SubClockState.SettingTime));
+  };
+
+  const handleResetSubClock = () => {
+    setSubClock(getClockInitial(subClockState));
+    setActiveGameClock(false);
+    setActiveSubClock(false);
+  }
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case "a":
+          handlePlay(); // 「a」キーで再生をトリガ
+          break;
+        case "ArrowRight":
+          handleNextClock(); // 右矢印キーで次のクロックをトリガ
+          break;
+        case "w":
+          if (subClockState === SubClockState.ShotClock) {
+            setSubClock((prev) => prev + 10);
+          }
+          break;
+        case "e":
+          if (subClockState === SubClockState.ShotClock) {
+            setSubClock((prev) => Math.max(0, prev - 10));
+          }
+          break;
+        case "r":
+          handleResetSubClock();
+          break;
+        case "s":
+          handlePause(); // 「s」キーで一時停止
+          break;
+        case "d":
+          handleResetAll(); // 「d」キーでリセット
+        case " ":
+          if (activeGameClock || activeSubClock) {
+            handlePause();
+          } else {
+            handlePlay();
+          }
+          break;
+      }
+    };
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [handlePlay, handleNextClock, subClockState]);
+
   useEffect(() => {
     if (activeGameClock) {
       gameClockIntervalRef.current = window.setInterval(() => {
@@ -170,18 +247,10 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
     return () => clearInterval(subClockIntervalRef.current!);
   }, [activeSubClock]);
 
-  const reset = () => {
-    setActiveGameClock(false);
-    setActiveSubClock(false);
-    setGameClock(GAME_CLOCK_INITIAL);
-    setSubClockState(SubClockState.SettingTime);
-    setSubClock(getClockInitial(SubClockState.SettingTime));
-  };
-
   const renderSubClock = () => {
     switch (subClockState) {
       case SubClockState.ShotClock:
-        return <ShotClock clock={subClock} setClock={setSubClock} active={activeSubClock} />;
+        return <ShotClock clock={subClock} setClock={setSubClock} active={activeSubClock} reset={handleResetSubClock} />;
       case SubClockState.PossessionChange:
         return <PosessionChange clock={subClock} active={activeSubClock} />;
       case SubClockState.SettingTime:
@@ -193,16 +262,7 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
 
   const NextClockButton = () => {
     return (
-      <button onClick={() => {
-        setActiveGameClock(false);
-        setActiveSubClock(false);
-        if (subClockState === SubClockState.PossessionChange) {
-          setIsRedOffense((prev) => !prev);
-        }
-        const nextClock = getNextClock(subClockState);
-        setSubClockState(nextClock);
-        setSubClock(getClockInitial(nextClock));
-      }}
+      <button onClick={handleNextClock}
         className="bg-gray-500 text-4xl hover:bg-gray-600 active:bg-gray-700 rounded">
         <FaArrowRight />
       </button>
@@ -237,28 +297,39 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
       </div>
       <div className="flex gap-2">
         <button
-          onClick={() => {
-            setActiveSubClock(true);
-            if (subClockState == SubClockState.ShotClock) {
-              setActiveGameClock(true);
-            }
-          }}
+          onClick={handlePlay}
           className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded active:bg-green-700 text-white font-semibold"
         >
           <FaPlay className="inline" />
         </button>
         <button
-          onClick={() => { setActiveGameClock(false); setActiveSubClock(false) }}
+          onClick={handlePause}
           className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700 rounded text-white font-semibold"
         >
           <FaPause className="inline" />
         </button>
         <button
-          onClick={reset}
+          onClick={handleResetAll}
           className="px-4 py-2 bg-red-500 hover:bg-red-600 active:bg-red-700 rounded text-white font-semibold"
         >
           <FaRedo className="inline" />
         </button>
+      </div>
+      {/* ショートカットキーの説明を横並びに変更 */}
+      <div className="text-xs text-gray-400 mt-4">
+        <div>ショートカットキー</div>
+        <div className="flex items-center justify-center">
+          <div className="mx-1">スペース: 再開/ストップ</div>
+          <div className="mx-1">A: 再開</div>
+          <div className="mx-1">S: ストップ</div>
+          <div className="mx-1">D: 全体リセット</div>
+          <div className="mx-1">⇒: 次のクロック</div>
+        </div>
+        <div className="flex items-center justify-center">
+          <div className="mx-1">W: ショットクロック +10s</div>
+          <div className="mx-1">E: ショットクロック -10s</div>
+          <div className="mx-1">R: ショットクロック リセット</div>
+        </div>
       </div>
     </div>
   );
