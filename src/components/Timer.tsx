@@ -195,7 +195,8 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
           break;
         case "d":
           handleResetAll(); // 「d」キーでリセット
-        case " ":
+          break;
+        case "Enter":
           if (activeGameClock || activeSubClock) {
             handlePause();
           } else {
@@ -319,7 +320,7 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
       <div className="text-xs text-gray-400 mt-4">
         <div>ショートカットキー</div>
         <div className="flex items-center justify-center">
-          <div className="mx-1">スペース: 再開/ストップ</div>
+          <div className="mx-1">Enter: 再開/ストップ</div>
           <div className="mx-1">A: 再開</div>
           <div className="mx-1">S: ストップ</div>
           <div className="mx-1">D: 全体リセット</div>
