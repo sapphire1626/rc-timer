@@ -48,9 +48,17 @@ enum Role {
 function RoleContent({ role }: { role: Role }) {
     switch (role) {
         case Role.Offense:
-            return (<GiBroadsword className="text-4xl" />);
+            return (
+                <div className="flex">
+                    <GiBroadsword className="text-4xl mr-1" />
+                    Offense
+                </div>);
         case Role.Defense:
-            return (<FaShieldAlt className="text-4xl" />);
+            return (
+                <div className="flex">
+                    <FaShieldAlt className="text-4xl mr-1" />
+                    Defense
+                </div>);
         default:
             return (<div></div>);
     }
