@@ -37,6 +37,11 @@ function playTimeupSound() {
   audio.play();
 }
 
+function playClockStartSound() {
+  const audio = new Audio("/audio/start1.mp3");
+  audio.play();
+}
+
 function getClockInitial(subClockState: SubClockState) {
   switch (subClockState) {
     case SubClockState.ShotClock:
@@ -133,7 +138,8 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
 
   const handlePlay = () => {
     setActiveSubClock(true);
-    if (subClockState == SubClockState.ShotClock) {
+    if (subClockState == SubClockState.ShotClock && !activeSubClock) {
+      playClockStartSound();
       setActiveGameClock(true);
     }
   };
