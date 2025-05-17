@@ -38,7 +38,7 @@ function playTimeupSound() {
 }
 
 function playClockStartSound() {
-  const audio = new Audio("/audio/start1.mp3");
+  const audio = new Audio("/audio/start3.mp3");
   audio.play();
 }
 
