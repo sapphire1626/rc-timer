@@ -137,9 +137,12 @@ export const Timer = ({ setIsRedOffense }: { setIsRedOffense: React.Dispatch<Rea
   const subClockIntervalRef = useRef<number | null>(null);
 
   const handlePlay = () => {
+    if (activeSubClock || subClock === 0) {
+      return;
+    }
+    playClockStartSound();
     setActiveSubClock(true);
     if (subClockState == SubClockState.ShotClock && !activeSubClock) {
-      playClockStartSound();
       setActiveGameClock(true);
     }
   };
